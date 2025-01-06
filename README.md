@@ -87,8 +87,3 @@ rviz2
 
 ## License
 This package is released under the Apache 2.0 License.
-
----
-
-## Contact
-For questions or issues, contact: **your_email@example.com**
