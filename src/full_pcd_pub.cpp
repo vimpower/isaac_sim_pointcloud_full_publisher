@@ -7,8 +7,7 @@
  * the updated data to a new topic. It supports dynamic configuration of LiDAR parameters
  * like the number of vertical beams (N_SCAN) and horizontal resolution (Horizon_SCAN).
  *
- * @author [Your Name]
- * @date [Date]
+ * @author Ashok Kumar J
  */
 
 #include <rclcpp/rclcpp.hpp>
