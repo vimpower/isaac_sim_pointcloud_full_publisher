@@ -16,7 +16,7 @@ sudo xargs -a requirements.txt apt install -y
 ## Running the Node
 To launch the node with dynamic parameters:
 ```bash
-ros2 launch isaac_sim_pointcloud_full_publisher full_pcd_pub.launch.py robot_namespace:=scout_1 N_SCAN:=128 Horizon_SCAN:=2048
+ros2 launch isaac_sim_pointcloud_full_publisher full_pcd_pub.launch.py robot_namespace:=scout_1_1 config_file:=velodyne_vls_128.yaml
 ```
 
 ---
@@ -50,11 +50,22 @@ Note: Replace `robot_namespace` with the desired namespace using the launch file
 ---
 
 ## Parameters
-| Parameter Name      | Default Value | Description                                                     |
+| Launch Parameter Name      | Default Value | Description                                                     |
 |---------------------|---------------|-----------------------------------------------------------------|
 | `robot_namespace`   | `robot_x`     | Namespace of the robot used in the topic names.                 |
-| `N_SCAN`            | `128`         | Number of vertical beams (LiDAR channels).                      |
-| `Horizon_SCAN`      | `2048`        | Horizontal resolution (points per scan).                        |
+
+Below config for **Velodyne VLS128**. 
+| Config Parameter Name      | Default Value | Description                                                     |
+|---------------------|---------------|-----------------------------------------------------------------|
+| `lidar_name`   | `velodyne`     | (velodyne, Ouster, and any lidar supported by Isaac SIM)                |
+| `vertical_channels`            | `128`         | Number of vertical beams (LiDAR channels).                      |
+| `horizontal_resolution`      | `1800`        | Horizontal resolution (points per scan).                        |
+| `fov_bottom`      | `-25`        | FoV below horizon                         |
+| `fov_top`      | `15`        | FoV above horizon.                        |
+| `min_dist`      | `1.0`        | Minimum range of the LiDAR.                        |
+| `max_dist`      | `120.0`        | Maximum range of the LiDAR.                        |
+
+To create a new params file, use the above parameters, and place it under `/Params`.
 
 ---
 
