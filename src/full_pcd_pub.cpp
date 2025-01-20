@@ -23,14 +23,14 @@ struct PointXYZIRT
     PCL_ADD_POINT4D                  ///< 3D point coordinates (x, y, z)
     PCL_ADD_INTENSITY                ///< Intensity value
     uint16_t ring;                   ///< Ring number
-    float time;                      ///< Time offset
+    // float time;                      ///< Time offset
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 } EIGEN_ALIGN16;
 
 // Register custom point type
 POINT_CLOUD_REGISTER_POINT_STRUCT (PointXYZIRT,
     (float, x, x) (float, y, y) (float, z, z) (float, intensity, intensity)
-    (uint16_t, ring, ring) (float, time, time)
+    (uint16_t, ring, ring) // (float, time, time)
 )
 
 /**
@@ -113,6 +113,17 @@ private:
         pcl::PointCloud<PointXYZIRT>::Ptr pc_new(new pcl::PointCloud<PointXYZIRT>());
         pcl::fromROSMsg(*pc_msg, *pc);
 
+        if (pc->points.empty()) {
+            RCLCPP_WARN(this->get_logger(), "Received empty point cloud!");
+            return;
+        }
+
+        // Extract scan start time from the header
+        double scan_start_time = pc_msg->header.stamp.sec + pc_msg->header.stamp.nanosec * 1e-9;
+
+        // Debug log for scan start time
+        RCLCPP_INFO(this->get_logger(), "Processing point cloud with timestamp: %f", scan_start_time);
+
         // LiDAR parameters for vertical FoV
         float ang_res_y = (fov_top - fov_bottom) / (N_SCAN - 1);  // Vertical resolution
 
@@ -140,7 +151,9 @@ private:
             }
 
             new_point.ring = static_cast<uint16_t>(rowIdn);
-            new_point.time = (point_id / static_cast<float>(N_SCAN)) * 0.1 / Horizon_SCAN;
+            // Calculate time for each point based on scan start time
+            // float point_relative_time = static_cast<float>(point_id) / static_cast<float>(pc->points.size());
+            // new_point.time = scan_start_time + point_relative_time;
 
             pc_new->points.push_back(new_point);
         }
