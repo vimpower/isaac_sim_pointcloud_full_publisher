@@ -30,6 +30,11 @@ ament_target_dependencies(
 install(TARGETS full_pcd_pub
   DESTINATION lib/${PROJECT_NAME})
 
+install(
+  DIRECTORY Params
+  DESTINATION share/${PROJECT_NAME}/
+)
+
 # Launch files
 install(DIRECTORY launch
 DESTINATION share/${PROJECT_NAME}/
