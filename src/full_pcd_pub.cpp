@@ -23,7 +23,7 @@ struct PointXYZIRT
     PCL_ADD_POINT4D                  ///< 3D point coordinates (x, y, z)
     PCL_ADD_INTENSITY                ///< Intensity value
     uint16_t ring;                   ///< Ring number
-    // float time;                      ///< Time offset
+    float time;                      ///< Time offset
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 } EIGEN_ALIGN16;
 
