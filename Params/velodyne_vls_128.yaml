@@ -1,9 +1,9 @@
 velodyne_vls_128:
   ros__parameters:
-    lidar_name: "Velodyne VLS-128"
-    vertical_channels: 128
-    horizontal_resolution: 1800
-    fov_bottom: -25.0
-    fov_top: 15.0
+    lidar_name: "Velodyne VLS-32"
+    vertical_channels: 32
+    horizontal_resolution: 1024
+    fov_bottom: -7
+    fov_top: 52
     min_dist: 1.0
     max_dist: 120.0
