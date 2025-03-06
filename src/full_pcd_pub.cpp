@@ -99,7 +99,7 @@ private:
         sensor_msgs::msg::PointCloud2 pc_new_msg;
         pcl::toROSMsg(*new_pc, pc_new_msg);
         pc_new_msg.header = old_msg.header;
-        pc_new_msg.header.frame_id = "LiDAR"; // Set frame ID
+        pc_new_msg.header.frame_id = old_msg.header.frame_id;
         pubPC_->publish(pc_new_msg);
     }
 
@@ -152,8 +152,8 @@ private:
 
             new_point.ring = static_cast<uint16_t>(rowIdn);
             // Calculate time for each point based on scan start time
-            // float point_relative_time = static_cast<float>(point_id) / static_cast<float>(pc->points.size());
-            // new_point.time = scan_start_time + point_relative_time;
+            float point_relative_time = static_cast<float>(point_id) / static_cast<float>(pc->points.size());
+            new_point.time = scan_start_time + point_relative_time;
 
             pc_new->points.push_back(new_point);
         }
