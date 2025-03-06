@@ -46,20 +46,20 @@ public:
     LidarRingConverter() : Node("lidar_ring_converter")
     {
         // Declare Launch Parameters
-        this->declare_parameter<std::string>("robot_namespace", "scout_1_1");
+        this->declare_parameter<std::string>("robot_namespace", "robot_x");
 
         // Decalare Configurable Parameters
-        this->declare_parameter<int>("N_SCAN", 128);
-        this->declare_parameter<int>("Horizon_SCAN", 1800);
-        this->declare_parameter<float>("fov_bottom", -25.0);
-        this->declare_parameter<float>("fov_top", 15.0);
+        this->declare_parameter<int>("vertical_channels", 32);
+        this->declare_parameter<int>("horizontal_resolution", 1024);
+        this->declare_parameter<float>("fov_bottom", -7);
+        this->declare_parameter<float>("fov_top", 52);
         this->declare_parameter<float>("min_dist", 1.0);
         this->declare_parameter<float>("max_dist", 100.0);
 
         // Get parameters
         std::string robot_namespace = this->get_parameter("robot_namespace").as_string();
-        N_SCAN = this->get_parameter("N_SCAN").as_int();
-        Horizon_SCAN = this->get_parameter("Horizon_SCAN").as_int();
+        vertical_channels = this->get_parameter("vertical_channels").as_int();
+        horizontal_resolution = this->get_parameter("horizontal_resolution").as_int();
         fov_bottom = this->get_parameter("fov_bottom").as_double();
         fov_top = this->get_parameter("fov_top").as_double();
         min_dist = this->get_parameter("min_dist").as_double();
@@ -71,14 +71,14 @@ public:
 
         // Create subscriber and publisher
         subPC_ = this->create_subscription<sensor_msgs::msg::PointCloud2>(
-            lidar_topic, 10, std::bind(&LidarRingConverter::lidarHandle, this, std::placeholders::_1));
+            lidar_topic, 1, std::bind(&LidarRingConverter::lidarHandle, this, std::placeholders::_1));
 
         pubPC_ = this->create_publisher<sensor_msgs::msg::PointCloud2>(output_topic, 10);
     }
 
 private:
-    int N_SCAN;                      ///< Number of vertical beams
-    int Horizon_SCAN;                ///< Horizontal resolution
+    int vertical_channels;                      ///< Number of vertical beams
+    int horizontal_resolution;                ///< Horizontal resolution
     float fov_bottom;                ///< Bottom of vertical FoV
     float fov_top;                   ///< Top of vertical FoV
     float min_dist;                  ///< Minimum distance threshold
@@ -125,7 +125,7 @@ private:
         RCLCPP_INFO(this->get_logger(), "Processing point cloud with timestamp: %f", scan_start_time);
 
         // LiDAR parameters for vertical FoV
-        float ang_res_y = (fov_top - fov_bottom) / (N_SCAN - 1);  // Vertical resolution
+        float ang_res_y = (fov_top - fov_bottom) / (vertical_channels - 1);  // Vertical resolution
 
         // Process each point
         for (size_t point_id = 0; point_id < pc->points.size(); ++point_id) {
@@ -146,7 +146,7 @@ private:
             float verticalAngle = atan2(new_point.z, sqrt(new_point.x * new_point.x + new_point.y * new_point.y)) * 180.0 / M_PI;
             float rowIdn = (verticalAngle - fov_bottom) / ang_res_y;
 
-            if (rowIdn < 0 || rowIdn >= N_SCAN) {
+            if (rowIdn < 0 || rowIdn >= vertical_channels) {
                 continue;  // Skip points outside the valid FoV
             }
 
@@ -167,7 +167,7 @@ private:
 int main(int argc, char **argv) {
     rclcpp::init(argc, argv);
     auto node = std::make_shared<LidarRingConverter>();
-    RCLCPP_INFO(node->get_logger(), "Listening to lidar topic ......");
+    RCLCPP_INFO(node->get_logger(), "Listening to lidar topic ...");
     rclcpp::spin(node);
     rclcpp::shutdown();
     return 0;
