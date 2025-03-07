@@ -50,7 +50,7 @@ public:
 
         // Decalare Configurable Parameters
         this->declare_parameter<int>("vertical_channels", 32);
-        this->declare_parameter<int>("horizontal_resolution", 1024);
+        this->declare_parameter<int>("horizontal_resolution", 1800);
         this->declare_parameter<float>("fov_bottom", -7);
         this->declare_parameter<float>("fov_top", 52);
         this->declare_parameter<float>("min_dist", 1.0);
